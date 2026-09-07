@@ -1,0 +1,35 @@
+import { useState } from 'react';
+import { ArrowRight, CheckCircle, X } from 'lucide-react';
+import { useInView } from '../hooks/useInView';
+
+function Reveal({ children, className = '', delay = '' }: { children: React.ReactNode; className?: string; delay?: string }) {
+  const { ref, inView } = useInView();
+  return <div ref={ref} className={`${className} ${inView ? `animate-fade-up ${delay}` : 'opacity-0'}`}>{children}</div>;
+}
+
+const SERVICES = [
+  { title:'Internal Audit & Governance', img:'https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&w=1400&q=85', desc:'Strengthen governance, internal controls, accountability and operational performance through structured internal audit support.', features:['Internal control reviews','Governance assessments','Operational audits','Audit readiness support'] },
+  { title:'Asset Management', img:'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1400&q=85', desc:'GRAP/IFRS-compliant asset registers, verification, condition assessments, optimisation and asset management procedures.', features:['Asset verification','Condition assessments','Asset register support','Staff training'] },
+  { title:'Budgeting & Municipal Finance', img:'https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1400&q=85', desc:'Professional municipal finance support covering budgeting, cash flow, reconciliations, annual financial statements and audit files.', features:['GRAP-compliant budgeting','Cash-flow management','Debtor & creditor reconciliations','Annual financial statements'] },
+  { title:'Enterprise Risk Management', img:'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1400&q=85', desc:'Integrated risk management solutions that help organisations identify, assess, monitor and respond to operational and strategic risk.', features:['Enterprise risk assessments','Risk infrastructure','Risk processes','Risk awareness training'] },
+  { title:'Investigations & Compliance', img:'https://images.unsplash.com/photo-1589578527966-fdac0f44566c?auto=format&fit=crop&w=1400&q=85', desc:'Professional forensic investigations, irregular expenditure investigations and regulatory compliance reviews.', features:['Forensic investigations','Irregular expenditure reviews','Compliance assessments','Regulatory reviews'] },
+  { title:'Taxation Services', img:'https://images.unsplash.com/photo-1554224154-26032ffc0d07?auto=format&fit=crop&w=1400&q=85', desc:'Tax support for companies and individuals, including corporate tax, individual tax and indirect tax matters.', features:['Corporate tax','Individual tax','Indirect tax','Tax practitioner support'] },
+  { title:'IT Systems Services', img:'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=85', desc:'Business IT consulting, support, infrastructure, cybersecurity, cloud, networking, CCTV, business systems and staff digital training.', features:['IT support & infrastructure','Cybersecurity & cloud','Networks & CCTV','Business systems & training'] },
+];
+
+export default function Services() {
+  const [selected,setSelected]=useState<string|null>(null);
+  const [name,setName]=useState('');
+  const [phone,setPhone]=useState('');
+  const [message,setMessage]=useState('');
+  const sendWhatsApp=()=>{
+    if(!selected) return;
+    const text=`Hello KAM Internal Auditors Inc.%0A%0AI am enquiring about: ${encodeURIComponent(selected)}%0AName: ${encodeURIComponent(name)}%0APhone: ${encodeURIComponent(phone)}%0ADetails: ${encodeURIComponent(message || 'Please contact me with more information.')}`;
+    window.open(`https://wa.me/27151010500?text=${text}`,'_blank');
+  };
+  return <div className="page-enter pt-20 bg-white">
+    <section className="relative py-24 bg-[#071d38] overflow-hidden"><div className="absolute inset-0 opacity-30 bg-[url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1800&q=85')] bg-cover bg-center"/><div className="absolute inset-0 bg-gradient-to-r from-[#06172e] via-[#082c49]/90 to-[#008e9e]/45"/><div className="relative max-w-7xl mx-auto px-5"><p className="text-cyan-300 uppercase tracking-[.25em] text-xs font-bold">Professional Solutions</p><h1 className="text-white text-5xl md:text-6xl font-extrabold mt-3">Our Services</h1><p className="text-slate-200 mt-5 max-w-2xl text-lg">Audit, governance, finance, taxation, compliance and technology solutions designed for public and private organisations.</p></div></section>
+    <section className="py-20"><div className="max-w-7xl mx-auto px-5 space-y-20">{SERVICES.map((svc,i)=><Reveal key={svc.title}><div className="grid lg:grid-cols-2 gap-12 items-center"><div className={i%2?'lg:order-2':''}><img src={svc.img} alt={svc.title} className="w-full h-[360px] object-cover rounded-3xl shadow-2xl"/></div><div className={i%2?'lg:order-1':''}><p className="text-cyan-600 uppercase tracking-widest text-xs font-bold">Service {String(i+1).padStart(2,'0')}</p><h2 className="text-3xl md:text-4xl font-extrabold text-[#08213f] mt-2 mb-4">{svc.title}</h2><p className="text-slate-600 leading-7 mb-5">{svc.desc}</p><ul className="space-y-2 mb-7">{svc.features.map(f=><li key={f} className="flex items-center gap-2 text-slate-700"><CheckCircle size={17} className="text-cyan-500"/>{f}</li>)}</ul><button onClick={()=>setSelected(svc.title)} className="inline-flex items-center gap-2 bg-[#08213f] hover:bg-cyan-700 text-white px-6 py-3.5 rounded-xl font-bold transition">Request this Service <ArrowRight size={17}/></button></div></div></Reveal>)}</div></section>
+    {selected&&<div className="fixed inset-0 z-[80] bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4"><div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl p-7 relative"><button onClick={()=>setSelected(null)} className="absolute right-5 top-5 text-slate-500"><X/></button><p className="text-cyan-600 uppercase tracking-widest text-xs font-bold">Service Enquiry</p><h3 className="text-2xl font-extrabold text-[#08213f] mt-2 mb-1">{selected}</h3><p className="text-slate-500 text-sm mb-5">Complete your details and the enquiry will open in WhatsApp ready to send.</p><div className="space-y-3"><input value={name} onChange={e=>setName(e.target.value)} placeholder="Your full name" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-400"/><input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Your phone number" className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-400"/><textarea value={message} onChange={e=>setMessage(e.target.value)} placeholder="Tell us what you need" rows={4} className="w-full border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-cyan-400"/><button onClick={sendWhatsApp} className="w-full bg-[#25D366] hover:bg-[#1fbd5a] text-white py-3.5 rounded-xl font-bold">Continue to WhatsApp</button></div></div></div>}
+  </div>;
+}
